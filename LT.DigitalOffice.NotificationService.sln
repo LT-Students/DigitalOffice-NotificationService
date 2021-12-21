@@ -5,14 +5,48 @@ VisualStudioVersion = 17.0.31912.275
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution items", "Solution items", "{487C5EBB-2856-4175-BF95-7CE3870857F6}"
 	ProjectSection(SolutionItems) = preProject
+		.dockerignore = .dockerignore
+		.editorconfig = .editorconfig
 		.gitignore = .gitignore
+		Common.Configurations.targets = Common.Configurations.targets
+		Dockerfile = Dockerfile
+		main.yml = main.yml
 	EndProjectSection
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{220DF4AB-B8F6-43A4-B18D-CD4ED5C899D7}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{C59BD56D-7A04-4859-9016-FDE2BAB5338A}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NotificationService", "src\NotificationService\NotificationService.csproj", "{A1742A14-B03B-4C13-B334-40BE86E47F2D}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NotificationService.Broker", "src\NotificationService.Broker\NotificationService.Broker.csproj", "{0D704D6A-E671-4F82-B481-5FDF771173B4}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NotificationService.Models.Dto", "src\NotificationService.Models.Dto\NotificationService.Models.Dto.csproj", "{39A746C4-AF72-4F3D-8937-72981306550C}"
 EndProject
 Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{A1742A14-B03B-4C13-B334-40BE86E47F2D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A1742A14-B03B-4C13-B334-40BE86E47F2D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A1742A14-B03B-4C13-B334-40BE86E47F2D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A1742A14-B03B-4C13-B334-40BE86E47F2D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0D704D6A-E671-4F82-B481-5FDF771173B4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0D704D6A-E671-4F82-B481-5FDF771173B4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0D704D6A-E671-4F82-B481-5FDF771173B4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0D704D6A-E671-4F82-B481-5FDF771173B4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{39A746C4-AF72-4F3D-8937-72981306550C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{39A746C4-AF72-4F3D-8937-72981306550C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{39A746C4-AF72-4F3D-8937-72981306550C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{39A746C4-AF72-4F3D-8937-72981306550C}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{A1742A14-B03B-4C13-B334-40BE86E47F2D} = {C59BD56D-7A04-4859-9016-FDE2BAB5338A}
+		{0D704D6A-E671-4F82-B481-5FDF771173B4} = {C59BD56D-7A04-4859-9016-FDE2BAB5338A}
+		{39A746C4-AF72-4F3D-8937-72981306550C} = {C59BD56D-7A04-4859-9016-FDE2BAB5338A}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {05695AE4-C65A-4D4E-9E71-2BBDF4321884}

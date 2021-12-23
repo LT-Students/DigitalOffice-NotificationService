@@ -1,16 +1,27 @@
-﻿using System.Text.Json.Serialization;
+﻿using System;
+using System.Collections.Generic;
+using System.Text.Json.Serialization;
 using HealthChecks.UI.Client;
-using LT.DigitalOffice.Kernel.BrokerSupport.Configurations;
+using MassTransit;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
+using Microsoft.Extensions.Logging;
+using Serilog;
 using LT.DigitalOffice.Kernel.BrokerSupport.Extensions;
+using LT.DigitalOffice.Kernel.BrokerSupport.Configurations;
 using LT.DigitalOffice.Kernel.BrokerSupport.Middlewares.Token;
+using LT.DigitalOffice.Kernel.Middlewares.ApiInformation;
 using LT.DigitalOffice.Kernel.Configurations;
 using LT.DigitalOffice.Kernel.Extensions;
-using LT.DigitalOffice.Kernel.Middlewares.ApiInformation;
 using LT.DigitalOffice.NotificationService.Models.Dto.Configuration;
-using MassTransit;
-using Microsoft.AspNetCore.Diagnostics.HealthChecks;
-using Microsoft.Extensions.Diagnostics.HealthChecks;
-using Serilog;
+using LT.DigitalOffice.Kernel.Helpers;
+using StackExchange.Redis;
+using LT.DigitalOffice.Kernel.RedisSupport.Helpers.Interfaces;
+using LT.DigitalOffice.Kernel.RedisSupport.Helpers;
+using LT.DigitalOffice.Kernel.RedisSupport.Configurations;
 
 namespace LT.DigitalOffice.NotificationService
 {
@@ -58,6 +69,18 @@ namespace LT.DigitalOffice.NotificationService
           });
       });
 
+      if (int.TryParse(Environment.GetEnvironmentVariable("RedisCacheLiveInMinutes"), out int redisCacheLifeTime))
+      {
+        services.Configure<RedisConfig>(options =>
+        {
+          options.CacheLiveInMinutes = redisCacheLifeTime;
+        });
+      }
+      else
+      {
+        services.Configure<RedisConfig>(Configuration.GetSection(RedisConfig.SectionName));
+      }
+
       services.Configure<TokenConfiguration>(Configuration.GetSection("CheckTokenMiddleware"));
       services.Configure<BaseRabbitMqConfig>(Configuration.GetSection(BaseRabbitMqConfig.SectionName));
       services.Configure<BaseServiceInfoConfig>(Configuration.GetSection(BaseServiceInfoConfig.SectionName));
@@ -70,6 +93,28 @@ namespace LT.DigitalOffice.NotificationService
           options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
         })
         .AddNewtonsoftJson();
+
+      services
+        .AddHealthChecks()
+        .AddRabbitMqCheck();
+
+      string redisConnStr = Environment.GetEnvironmentVariable("RedisConnectionString");
+      if (string.IsNullOrEmpty(redisConnStr))
+      {
+        redisConnStr = Configuration.GetConnectionString("Redis");
+
+        Log.Information($"Redis connection string from appsettings.json was used. Value '{HidePasswordHelper.HidePassword(redisConnStr)}'");
+      }
+      else
+      {
+        Log.Information($"Redis connection string from environment was used. Value '{HidePasswordHelper.HidePassword(redisConnStr)}'");
+      }
+
+      services.AddSingleton<IConnectionMultiplexer>(
+        x => ConnectionMultiplexer.Connect(redisConnStr));
+
+      services.AddTransient<ICacheNotebook, CacheNotebook>();
+      services.AddTransient<IRedisHelper, RedisHelper>();
 
       services.AddBusinessObjects();
 
@@ -144,6 +189,7 @@ namespace LT.DigitalOffice.NotificationService
 
       services.AddMassTransit(x =>
       {
+
         x.UsingRabbitMq((context, cfg) =>
         {
           cfg.Host(_rabbitMqConfig.Host, "/", host =>
@@ -151,7 +197,9 @@ namespace LT.DigitalOffice.NotificationService
             host.Username(username);
             host.Password(password);
           });
+
         });
+
         x.AddRequestClients(_rabbitMqConfig);
       });
 

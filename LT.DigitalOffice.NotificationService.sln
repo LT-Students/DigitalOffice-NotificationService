@@ -1,0 +1,54 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31912.275
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution items", "Solution items", "{487C5EBB-2856-4175-BF95-7CE3870857F6}"
+	ProjectSection(SolutionItems) = preProject
+		.dockerignore = .dockerignore
+		.editorconfig = .editorconfig
+		.gitignore = .gitignore
+		Common.Configurations.targets = Common.Configurations.targets
+		Dockerfile = Dockerfile
+		main.yml = main.yml
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{C59BD56D-7A04-4859-9016-FDE2BAB5338A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NotificationService", "src\NotificationService\NotificationService.csproj", "{F2E1F02A-9F8C-49E0-B00C-2F7A8C83A4A7}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NotificationService.Models.Dto", "src\NotificationService.Models.Dto\NotificationService.Models.Dto.csproj", "{54A42A97-6706-4957-97BA-E45CCA0DF62B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NotificationService.Broker", "src\NotificationService.Broker\NotificationService.Broker.csproj", "{9EE65356-DC64-4DA3-B6DD-0FE4C361881A}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{F2E1F02A-9F8C-49E0-B00C-2F7A8C83A4A7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F2E1F02A-9F8C-49E0-B00C-2F7A8C83A4A7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F2E1F02A-9F8C-49E0-B00C-2F7A8C83A4A7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F2E1F02A-9F8C-49E0-B00C-2F7A8C83A4A7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{54A42A97-6706-4957-97BA-E45CCA0DF62B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{54A42A97-6706-4957-97BA-E45CCA0DF62B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{54A42A97-6706-4957-97BA-E45CCA0DF62B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{54A42A97-6706-4957-97BA-E45CCA0DF62B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9EE65356-DC64-4DA3-B6DD-0FE4C361881A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9EE65356-DC64-4DA3-B6DD-0FE4C361881A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9EE65356-DC64-4DA3-B6DD-0FE4C361881A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9EE65356-DC64-4DA3-B6DD-0FE4C361881A}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{F2E1F02A-9F8C-49E0-B00C-2F7A8C83A4A7} = {C59BD56D-7A04-4859-9016-FDE2BAB5338A}
+		{54A42A97-6706-4957-97BA-E45CCA0DF62B} = {C59BD56D-7A04-4859-9016-FDE2BAB5338A}
+		{9EE65356-DC64-4DA3-B6DD-0FE4C361881A} = {C59BD56D-7A04-4859-9016-FDE2BAB5338A}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {05695AE4-C65A-4D4E-9E71-2BBDF4321884}
+	EndGlobalSection
+EndGlobal

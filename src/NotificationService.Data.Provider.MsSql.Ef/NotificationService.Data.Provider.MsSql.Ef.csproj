@@ -1,0 +1,10 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <Import Project="$(ProjectDir)..\..\Common.Configurations.targets" />
+
+  <ItemGroup>
+    <ProjectReference Include="..\NotificationService.Data.Provider\NotificationService.Data.Provider.csproj" />
+    <ProjectReference Include="..\NotificationService.Models.Db\NotificationService.Models.Db.csproj" />
+  </ItemGroup>
+
+</Project>

@@ -2,26 +2,28 @@
 using System.Collections.Generic;
 using System.Text.Json.Serialization;
 using HealthChecks.UI.Client;
+using LT.DigitalOffice.Kernel.BrokerSupport.Configurations;
+using LT.DigitalOffice.Kernel.BrokerSupport.Extensions;
+using LT.DigitalOffice.Kernel.BrokerSupport.Middlewares.Token;
+using LT.DigitalOffice.Kernel.Configurations;
+using LT.DigitalOffice.Kernel.Extensions;
+using LT.DigitalOffice.Kernel.Helpers;
+using LT.DigitalOffice.Kernel.Middlewares.ApiInformation;
+using LT.DigitalOffice.Kernel.RedisSupport.Configurations;
+using LT.DigitalOffice.Kernel.RedisSupport.Helpers;
+using LT.DigitalOffice.Kernel.RedisSupport.Helpers.Interfaces;
+using LT.DigitalOffice.NotificationService.Data.Provider.MsSql.Ef;
+using LT.DigitalOffice.NotificationService.Models.Dto.Configuration;
 using MassTransit;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Logging;
 using Serilog;
-using LT.DigitalOffice.Kernel.BrokerSupport.Extensions;
-using LT.DigitalOffice.Kernel.BrokerSupport.Configurations;
-using LT.DigitalOffice.Kernel.BrokerSupport.Middlewares.Token;
-using LT.DigitalOffice.Kernel.Middlewares.ApiInformation;
-using LT.DigitalOffice.Kernel.Configurations;
-using LT.DigitalOffice.Kernel.Extensions;
-using LT.DigitalOffice.NotificationService.Models.Dto.Configuration;
-using LT.DigitalOffice.Kernel.Helpers;
 using StackExchange.Redis;
-using LT.DigitalOffice.Kernel.RedisSupport.Helpers.Interfaces;
-using LT.DigitalOffice.Kernel.RedisSupport.Helpers;
-using LT.DigitalOffice.Kernel.RedisSupport.Configurations;
 
 namespace LT.DigitalOffice.NotificationService
 {
@@ -94,20 +96,39 @@ namespace LT.DigitalOffice.NotificationService
         })
         .AddNewtonsoftJson();
 
+      string connStr = Environment.GetEnvironmentVariable("ConnectionString");
+      if (string.IsNullOrEmpty(connStr))
+      {
+        connStr = Configuration.GetConnectionString("SQLConnectionString");
+
+        Log.Information($"SQL connection string from appsettings.json was used. Value '{PasswordHider.Hide(connStr)}'.");
+      }
+      else
+      {
+        Log.Information($"SQL connection string from environment was used. Value '{PasswordHider.Hide(connStr)}'.");
+      }
+
+      services.AddDbContext<NotificationServiceDbContext>(options =>
+      {
+        options.UseSqlServer(connStr);
+      });
+
       services
         .AddHealthChecks()
         .AddRabbitMqCheck();
+
+      services.AddSqlServer<NotificationServiceDbContext>(connStr);
 
       string redisConnStr = Environment.GetEnvironmentVariable("RedisConnectionString");
       if (string.IsNullOrEmpty(redisConnStr))
       {
         redisConnStr = Configuration.GetConnectionString("Redis");
 
-        Log.Information($"Redis connection string from appsettings.json was used. Value '{HidePasswordHelper.HidePassword(redisConnStr)}'");
+        Log.Information($"Redis connection string from appsettings.json was used. Value '{PasswordHider.Hide(redisConnStr)}'");
       }
       else
       {
-        Log.Information($"Redis connection string from environment was used. Value '{HidePasswordHelper.HidePassword(redisConnStr)}'");
+        Log.Information($"Redis connection string from environment was used. Value '{PasswordHider.Hide(redisConnStr)}'");
       }
 
       services.AddSingleton<IConnectionMultiplexer>(
@@ -123,6 +144,8 @@ namespace LT.DigitalOffice.NotificationService
 
     public void Configure(IApplicationBuilder app, ILoggerFactory loggerFactory)
     {
+      UpdateDatabase(app);
+
       app.UseForwardedHeaders();
 
       app.UseExceptionsHandler(loggerFactory);
@@ -156,6 +179,17 @@ namespace LT.DigitalOffice.NotificationService
     #endregion
 
     #region private methods
+
+    private void UpdateDatabase(IApplicationBuilder app)
+    {
+      using var serviceScope = app.ApplicationServices
+        .GetRequiredService<IServiceScopeFactory>()
+        .CreateScope();
+
+      using var context = serviceScope.ServiceProvider.GetService<NotificationServiceDbContext>();
+
+      context.Database.Migrate();
+    }
 
     private (string username, string password) GetRabbitMqCredentials()
     {

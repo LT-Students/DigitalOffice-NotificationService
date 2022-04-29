@@ -11,7 +11,7 @@ namespace NotificationService.Models.Db
 
     public Guid Id { get; set; }
     public Guid UserId { get; set; }
-    public string Name { get; set; }
+    public string Description { get; set; }
     public NotificationsStatus Status { get; set; }
     public Guid CreatedBy { get; set; }
     public DateTime CreatedAtUtc { get; set; }

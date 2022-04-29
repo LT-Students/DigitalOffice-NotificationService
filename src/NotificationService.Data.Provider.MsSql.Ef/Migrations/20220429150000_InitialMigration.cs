@@ -17,7 +17,7 @@ namespace LT.DigitalOffice.NotificationService.Data.Provider.MsSql.Ef.Migrations
         {
           Id = table.Column<Guid>(nullable: false),
           UserId = table.Column<Guid>(nullable: false),
-          Name = table.Column<string>(nullable: false),       
+          Description = table.Column<string>(nullable: false),       
           Status = table.Column<int>(nullable: false),
           CreatedBy = table.Column<Guid>(nullable: false),
           CreatedAtUtc = table.Column<DateTime>(nullable: false),
